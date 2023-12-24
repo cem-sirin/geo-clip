@@ -19,13 +19,14 @@ class GeoCLIP(nn.Module):
         logit_scale_path="model/weights/logit_scale_weights.pth",
         location_encoder_path="model/weights/location_encoder_weights.pth",
         gps_gallery_path="model/gps_gallery_100K.csv",
+        mlp_path="model/weights/image_encoder_mlp_weights.pth",
     ):
         super().__init__()
 
         self.input_resolution = input_resolution
         self.logit_scale = nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
 
-        self.image_encoder = ImageEncoder()
+        self.image_encoder = ImageEncoder(mlp_path)
         self.location_encoder = LocationEncoder()
 
         self.gps_gallery = load_gps_data(gps_gallery_path)

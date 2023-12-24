@@ -4,12 +4,12 @@ from transformers import CLIPModel, AutoProcessor
 
 
 class ImageEncoder(nn.Module):
-    def __init__(self):
+    def __init__(self, mlp_path="model/weights/image_encoder_mlp_weights.pth"):
         super(ImageEncoder, self).__init__()
         self.CLIP = CLIPModel.from_pretrained("openai/clip-vit-large-patch14")
         self.image_processor = AutoProcessor.from_pretrained("openai/clip-vit-large-patch14")
         self.mlp = nn.Sequential(nn.Linear(768, 768), nn.ReLU(), nn.Linear(768, 512))
-        self.mlp.load_state_dict(torch.load("model/weights/image_encoder_mlp_weights.pth"))
+        self.mlp.load_state_dict(torch.load(mlp_path))
 
     def preprocess_image(self, image):
         return self.image_processor(images=image, return_tensors="pt")
