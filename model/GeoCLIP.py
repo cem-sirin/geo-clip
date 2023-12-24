@@ -11,7 +11,15 @@ from torchvision.transforms import ToPILImage
 
 
 class GeoCLIP(nn.Module):
-    def __init__(self, input_resolution=224, opt=None, dim=512):
+    def __init__(
+        self,
+        input_resolution=224,
+        opt=None,
+        dim=512,
+        logit_scale_path="model/weights/logit_scale_weights.pth",
+        location_encoder_path="model/weights/location_encoder_weights.pth",
+        gps_gallery_path="model/gps_gallery_100K.csv",
+    ):
         super().__init__()
 
         self.input_resolution = input_resolution
@@ -20,11 +28,13 @@ class GeoCLIP(nn.Module):
         self.image_encoder = ImageEncoder()
         self.location_encoder = LocationEncoder()
 
-        self.gps_gallery = load_gps_data("model/gps_gallery_100K.csv")
+        self.gps_gallery = load_gps_data(gps_gallery_path)
 
         # Load weights
-        self.logit_scale = nn.Parameter(torch.load("model/weights/logit_scale_weights.pth"))
-        self.location_encoder.load_state_dict(torch.load("model/weights/location_encoder_weights.pth"))
+        if logit_scale_path:
+            self.logit_scale = nn.Parameter(torch.load(logit_scale_path))
+        if location_encoder_path:
+            self.location_encoder.load_state_dict(torch.load(location_encoder_path))
 
     def forward(self, image, location):
         # Compute Features
