@@ -81,9 +81,10 @@ class LocationEncoder(nn.Module):
         location = location.float()
         if self.earth_proj:
             location = equal_earth_projection(location)
-        location_features = torch.zeros(location.shape[0], 512)
 
-        for i in range(self.n):
+        location_features = self._modules["LocEnc0"](location)
+
+        for i in range(1, self.n):
             location_features += self._modules["LocEnc" + str(i)](location)
 
         return location_features
