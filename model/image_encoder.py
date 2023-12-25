@@ -15,7 +15,7 @@ class ImageEncoder(nn.Module):
         return self.image_processor(images=image, return_tensors="pt")
 
     def get_image_features(self, image):
-        inputs = self.preprocess_image(image)
+        inputs = self.preprocess_image(image).to(self.CLIP.device)
         return self.CLIP.get_image_features(**inputs)
 
     def forward(self, x):
